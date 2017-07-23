@@ -5,5 +5,6 @@
     "extract": {
         "groups": ["Groupe1", "Groupe2"],
         "programs" : ["ProgramName1","ProgramName2","ProgramName3"]
-    }
+    },
+    "dest_path": "../../HGScripts/"
 }

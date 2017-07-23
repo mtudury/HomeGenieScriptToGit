@@ -14,6 +14,11 @@
   "author": "Matthieu Tudury",
   "license": "MIT",
   "dependencies": {
+    "mkdirp": "^0.5.1",
     "request": "^2.81.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mtudury/HomeGenieScriptToGit.git"
   }
 }
