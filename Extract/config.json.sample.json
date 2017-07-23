@@ -1,0 +1,9 @@
+{
+    "homegenie": { 
+        "url": "http://127.0.0.1/"
+    },
+    "extract": {
+        "groups": ["Groupe1", "Groupe2"],
+        "programs" : ["ProgramName1","ProgramName2","ProgramName3"]
+    }
+}

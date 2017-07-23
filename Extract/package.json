@@ -1,0 +1,19 @@
+{
+  "name": "homegenie_script_git_extract",
+  "version": "1.0.0",
+  "description": "Automate script extraction from Homegenie to file on filesystem",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "keywords": [
+    "homegenie",
+    "extract",
+    "explode"
+  ],
+  "author": "Matthieu Tudury",
+  "license": "MIT",
+  "dependencies": {
+    "node-wget": "^0.4.2"
+  }
+}
