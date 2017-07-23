@@ -33,10 +33,25 @@ function loadProgramsFromHomegenie(callback) {
 }
 
 function filterPrograms(programs) {
+    if (!config.extract)
+        return programs;
 
+    if ((!config.extract.groups)&&(!config.extract.programs))
+        return programs;
 
+    if ((config.extract.groups)&&(config.extract.groups.length==0)&&(config.extract.programs)&&(config.extract.programs.length==0))
+        return programs;
 
-    return programs;
+    let dest = [];
+
+    programs.forEach(function (prg) { 
+        if ((config.extract.groups)&&(config.extract.groups.includes(prg.Group)))
+            dest.push(prg);
+        else if ((config.extract.programs)&&(config.extract.programs.includes(prg.Name)))
+            dest.push(prg);
+    })
+
+    return dest;
 }
 
 function sanitize(pathpart) {
@@ -61,6 +76,10 @@ function writeProgramToDisk(program) {
     mkdirp.sync(programpath);
 
     fs.writeFileSync(path.join(programpath,"scriptsource_" + sanitize(program.Name) + extension), unescape(program.ScriptSource));
+    fs.writeFileSync(path.join(programpath,"scriptcondition_" + sanitize(program.Name) + extension), unescape(program.ScriptCondition));
+    fs.writeFileSync(path.join(programpath,"raw_" + sanitize(program.Name) + ".json"), JSON.stringify(program));
+
+    console.log('Extracted ' + program.Group + ' - ' + program.Name);
 }
 
 

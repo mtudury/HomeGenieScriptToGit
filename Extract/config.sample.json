@@ -3,8 +3,10 @@
         "url": "http://127.0.0.1/"
     },
     "extract": {
-        "groups": ["Groupe1", "Groupe2"],
-        "programs" : ["ProgramName1","ProgramName2","ProgramName3"]
+        "sample_groups": ["Groupe1", "Groupe2"],
+        "sample_programs": ["ProgramName1","ProgramName2","ProgramName3"],
+        "groups": null, 
+        "programs": null
     },
     "dest_path": "../../HGScripts/"
 }
