@@ -15,3 +15,10 @@ go to the Extract folder
 run :
 npm install
 
+copy config.sample.json to config.json
+modify config.json content to match your environment
+
+## How to run
+
+node index.js
+
