@@ -3,8 +3,9 @@ var request = require('request');
 var mkdirp = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
-
 var config = require('./config.json');
+
+var git = require('simple-git')(config.dest_path);
 
 
 function loadProgramsFromHomegenie(callback) {
@@ -83,4 +84,37 @@ function writeProgramToDisk(program) {
 }
 
 
-loadProgramsFromHomegenie().then(function (body) { filterPrograms(JSON.parse(body)).forEach(function(prg) { writeProgramToDisk(prg)}); });
+loadProgramsFromHomegenie().then(function (body) { 
+    filterPrograms(JSON.parse(body)).forEach(function(prg) { writeProgramToDisk(prg)});
+    if (config.git.use_git) {
+        git.status(function(err, status) {
+            if (err)
+                console.log(err);
+            else if ((status.not_added.length > 0)||(status.created.length > 0)||(status.deleted.length > 0)||(status.modified.length > 0)||(status.renamed.length > 0)) {
+                git.add('.', function (err) {
+                    if (err)
+                        console.log(err);
+                    else {
+                        var message = 'HomeGenieScriptToGit autocommit '+ new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+                        git.commit(message, null, null, function (err, summary) {
+                            if (err)
+                                console.log(err);
+                            else {
+                                console.log('git commit ok.')
+                                if (config.git.push) {
+                                    git.push(function (err) {
+                                        if (err)
+                                            console.log(err);
+                                        else
+                                            console.log('git push done.');
+                                    })
+                                }
+                            }
+                        })
+                    }
+
+                })
+            } else console.log('No changes detected');
+        });
+    }
+ });
