@@ -1,11 +1,11 @@
 
-var request = require('request');
-var mkdirp = require('mkdirp');
-var path = require('path');
-var fs = require('fs');
-var config = require('./config.json');
+const request = require('request');
+const mkdirp = require('mkdirp');
+const path = require('path');
+const fs = require('fs');
+const config = require('./config.json');
 
-var git = require('simple-git')(config.dest_path);
+const git = require('simple-git')(config.dest_path);
 
 
 function loadProgramsFromHomegenie(callback) {
@@ -78,7 +78,7 @@ function writeProgramToDisk(program) {
 
     fs.writeFileSync(path.join(programpath,"scriptsource_" + sanitize(program.Name) + extension), unescape(program.ScriptSource));
     fs.writeFileSync(path.join(programpath,"scriptcondition_" + sanitize(program.Name) + extension), unescape(program.ScriptCondition));
-    fs.writeFileSync(path.join(programpath,"raw_" + sanitize(program.Name) + ".json"), JSON.stringify(program));
+    fs.writeFileSync(path.join(programpath,"raw_" + sanitize(program.Name) + ".json"), JSON.stringify(program, null, 4));
 
     console.log('Extracted ' + program.Group + ' - ' + program.Name);
 }
