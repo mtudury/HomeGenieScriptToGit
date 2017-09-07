@@ -9,7 +9,7 @@ Git CLI
 
 ## How to Install
 
-After cloned the repository
+Clone/Download this repository
 
 go to the Extract folder  
 run :  
