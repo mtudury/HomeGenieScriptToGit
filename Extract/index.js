@@ -8,7 +8,7 @@ const config = require('./config.json');
 const git = require('simple-git')(config.dest_path);
 
 
-function loadProgramsFromHomegenie(callback) {
+function loadProgramsFromHomegenie() {
     return new Promise(function (resolve, reject) {
         request({
                 url:  config.homegenie.url + '/api/HomeAutomation.HomeGenie/Automation/Programs.List/',
@@ -20,12 +20,44 @@ function loadProgramsFromHomegenie(callback) {
                     console.log(error);            // error encountered 
                     reject(error);
                 } else {
-                    /*
-                    console.log('--- headers:');
-                    console.log(response.headers); // response headers 
-                    console.log('--- body:');
-                    console.log(body);             // content of package 
-                    */
+                    resolve(body);
+                }
+            }
+        );
+    });
+}
+
+function loadWidgetsFromHomegenie() {
+    return new Promise(function (resolve, reject) {
+        request({
+                url:  config.homegenie.url + '/api/HomeAutomation.HomeGenie/Config/Widgets.List/',
+                timeout: 60000       // duration to wait for request fulfillment in milliseconds, default is 2 seconds
+            },
+            function (error, response, body) {
+                if (error) {
+                    console.log('--- error:');
+                    console.log(error);            // error encountered 
+                    reject(error);
+                } else {
+                    resolve(body);
+                }
+            }
+        );
+    });
+}
+
+function loadWidgetContentFromHomegenie(widget_path) {
+    return new Promise(function (resolve, reject) {
+        request({
+                url:  config.homegenie.url + '/hg/html/pages/control/widgets/' + widget_path,
+                timeout: 60000       // duration to wait for request fulfillment in milliseconds, default is 2 seconds
+            },
+            function (error, response, body) {
+                if (error) {
+                    console.log('--- error:');
+                    console.log(error);            // error encountered 
+                    reject(error);
+                } else {
                     resolve(body);
                 }
             }
@@ -50,7 +82,19 @@ function filterPrograms(programs) {
             dest.push(prg);
         else if ((config.extract.programs)&&(config.extract.programs.includes(prg.Name)))
             dest.push(prg);
-    })
+    });
+
+    return dest;
+}
+
+function filterWidgets(widgets) {
+
+    let dest = [];
+
+    widgets.forEach(function (widget) { 
+        if (!widget.startsWith("homegenie/"))
+            dest.push(widget);
+    });
 
     return dest;
 }
@@ -72,7 +116,7 @@ function writeProgramToDisk(program) {
     }
 
 
-    let programpath = path.join( config.dest_path, sanitize(program.Group), sanitize(program.Name));
+    let programpath = path.join( config.dest_path, "programs", sanitize(program.Group), sanitize(program.Name));
 
     mkdirp.sync(programpath);
 
@@ -85,38 +129,63 @@ function writeProgramToDisk(program) {
     console.log('Extracted ' + program.Group + ' - ' + program.Name);
 }
 
+function loadAndWriteWidgetsToDisk(arrPromises, widget) {
+    arrPromises.push(loadWidgetContentFromHomegenie(widget + ".html").then(function (content) {
+        writeWidgetsToDisk(widget + ".html", content);
+    }));
+    arrPromises.push(loadWidgetContentFromHomegenie(widget + ".js").then(function (content) {
+        writeWidgetsToDisk(widget + ".js", content);
+    }));
+} 
+
+function writeWidgetsToDisk(widget_path, content) {
+    let widgetpath = path.join( config.dest_path, "widgets", widget_path);
+
+    mkdirp.sync(path.dirname(widgetpath));
+
+    fs.writeFileSync(widgetpath, content);
+
+    console.log('Extracted ' + widget_path);
+}
 
 loadProgramsFromHomegenie().then(function (body) { 
-    filterPrograms(JSON.parse(body)).forEach(function(prg) { writeProgramToDisk(prg)});
-    if (config.git.use_git) {
-        git.status(function(err, status) {
-            if (err)
-                console.log(err);
-            else if ((status.not_added.length > 0)||(status.created.length > 0)||(status.deleted.length > 0)||(status.modified.length > 0)||(status.renamed.length > 0)) {
-                git.add('.', function (err) {
+    filterPrograms(JSON.parse(body)).forEach(function(prg) { writeProgramToDisk(prg); });
+
+    loadWidgetsFromHomegenie().then(function (body) { 
+        var arrPromises = [];
+        filterWidgets(JSON.parse(body)).forEach(function(widget) { loadAndWriteWidgetsToDisk(arrPromises, widget); });
+        Promise.all(arrPromises).then(function() {
+            if (config.git.use_git) {
+                git.status(function(err, status) {
                     if (err)
                         console.log(err);
-                    else {
-                        var message = 'HomeGenieScriptToGit autocommit '+ new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-                        git.commit(message, null, null, function (err, summary) {
+                    else if ((status.not_added.length > 0)||(status.created.length > 0)||(status.deleted.length > 0)||(status.modified.length > 0)||(status.renamed.length > 0)) {
+                        git.add('.', function (err) {
                             if (err)
                                 console.log(err);
                             else {
-                                console.log('git commit ok.')
-                                if (config.git.push) {
-                                    git.push(function (err) {
-                                        if (err)
-                                            console.log(err);
-                                        else
-                                            console.log('git push done.');
-                                    })
-                                }
+                                var message = 'HomeGenieScriptToGit autocommit '+ new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+                                git.commit(message, null, null, function (err, summary) {
+                                    if (err)
+                                        console.log(err);
+                                    else {
+                                        console.log('git commit ok.')
+                                        if (config.git.push) {
+                                            git.push(function (err) {
+                                                if (err)
+                                                    console.log(err);
+                                                else
+                                                    console.log('git push done.');
+                                            })
+                                        }
+                                    }
+                                })
                             }
-                        })
-                    }
 
-                })
-            } else console.log('No changes detected');
+                        })
+                    } else console.log('No changes detected');
+                });
+            }
         });
-    }
- });
+    });
+});
