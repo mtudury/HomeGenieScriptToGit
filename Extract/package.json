@@ -14,6 +14,7 @@
   "author": "Matthieu Tudury",
   "license": "MIT",
   "dependencies": {
+    "es6-promise-pool": "^2.5.0",
     "mkdirp": "^0.5.1",
     "request": "^2.81.0",
     "simple-git": "^1.74.1"

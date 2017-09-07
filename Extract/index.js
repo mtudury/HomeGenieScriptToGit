@@ -7,6 +7,7 @@ const config = require('./config.json');
 
 const git = require('simple-git')(config.dest_path);
 
+let PromisePool = require('es6-promise-pool')
 
 function loadProgramsFromHomegenie() {
     return new Promise(function (resolve, reject) {
@@ -129,15 +130,6 @@ function writeProgramToDisk(program) {
     console.log('Extracted ' + program.Group + ' - ' + program.Name);
 }
 
-function loadAndWriteWidgetsToDisk(arrPromises, widget) {
-    arrPromises.push(loadWidgetContentFromHomegenie(widget + ".html").then(function (content) {
-        writeWidgetsToDisk(widget + ".html", content);
-    }));
-    arrPromises.push(loadWidgetContentFromHomegenie(widget + ".js").then(function (content) {
-        writeWidgetsToDisk(widget + ".js", content);
-    }));
-} 
-
 function writeWidgetsToDisk(widget_path, content) {
     let widgetpath = path.join( config.dest_path, "widgets", widget_path);
 
@@ -148,14 +140,29 @@ function writeWidgetsToDisk(widget_path, content) {
     console.log('Extracted ' + widget_path);
 }
 
+console.log('-- Programs --');
 loadProgramsFromHomegenie().then(function (body) { 
     filterPrograms(JSON.parse(body)).forEach(function(prg) { writeProgramToDisk(prg); });
 
+    console.log('-- Widgets --');
     loadWidgetsFromHomegenie().then(function (body) { 
-        var arrPromises = [];
-        filterWidgets(JSON.parse(body)).forEach(function(widget) { loadAndWriteWidgetsToDisk(arrPromises, widget); });
-        Promise.all(arrPromises).then(function() {
+        let widgets = filterWidgets(JSON.parse(body));
+        const generatePromises = function * () {
+            for (let count = 0; count < widgets.length; count++) {
+                let widget = widgets[count];
+                yield loadWidgetContentFromHomegenie(widget + ".html").then(function (content) {
+                    writeWidgetsToDisk(widget + ".html", content);
+                });
+                yield loadWidgetContentFromHomegenie(widget + ".js").then(function (content) {
+                    writeWidgetsToDisk(widget + ".js", content);
+                });
+            }
+        };
+        let pool = new PromisePool(generatePromises, 2);
+
+        pool.start().then(function() {
             if (config.git.use_git) {
+                console.log('-- GIT --');
                 git.status(function(err, status) {
                     if (err)
                         console.log(err);
