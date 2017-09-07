@@ -76,6 +76,8 @@ function writeProgramToDisk(program) {
 
     mkdirp.sync(programpath);
 
+    delete program.TriggerTime;
+
     fs.writeFileSync(path.join(programpath,"scriptsource_" + sanitize(program.Name) + extension), unescape(program.ScriptSource));
     fs.writeFileSync(path.join(programpath,"scriptcondition_" + sanitize(program.Name) + extension), unescape(program.ScriptCondition));
     fs.writeFileSync(path.join(programpath,"raw_" + sanitize(program.Name) + ".json"), JSON.stringify(program, null, 4));
