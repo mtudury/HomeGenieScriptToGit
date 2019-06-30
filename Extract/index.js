@@ -131,8 +131,10 @@ function writeProgramToDisk(program) {
     delete program.ScriptSource;
     delete program.ScriptCondition;
 
-    fs.writeFileSync(path.join(programpath,"scriptsource_" + san_program_name + extension), unescape(source));
-    fs.writeFileSync(path.join(programpath,"scriptcondition_" + san_program_name + extension), unescape(condition));
+    if (source)
+	fs.writeFileSync(path.join(programpath,"scriptsource_" + san_program_name + extension), unescape(source));
+    if (condition)
+        fs.writeFileSync(path.join(programpath,"scriptcondition_" + san_program_name + extension), unescape(condition));
     fs.writeFileSync(path.join(programpath,"metadata_" + san_program_name + ".json"), JSON.stringify(program, null, 4));
 
     console.log('Extracted ' + program.Group + ' - ' + program.Name);
