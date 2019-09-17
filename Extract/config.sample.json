@@ -8,9 +8,9 @@
         "groups": null, 
         "programs": null
     },
-    "dest_path": "../../HGScripts/",
+    "dest_path": "/hsgt/ext/git/",
     "git": {
         "use_git": true,
-        "push": true
+        "push": false
     }
 }
