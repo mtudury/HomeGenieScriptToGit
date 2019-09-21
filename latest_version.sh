@@ -1,2 +1,2 @@
 #!/bin/bash
-export hstgversion=0.1
+export hstgversion=0.2
