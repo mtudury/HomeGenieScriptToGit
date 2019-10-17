@@ -121,6 +121,8 @@ function writeProgramToDisk(program) {
 
     mkdirp.sync(programpath);
 
+    fs.writeFileSync(path.join(programpath,"raw_" + san_program_name + ".json"), JSON.stringify(program));
+
     delete program.TriggerTime;
     delete program.ActivationTime;
 
@@ -130,6 +132,7 @@ function writeProgramToDisk(program) {
 
     delete program.ScriptSource;
     delete program.ScriptCondition;
+    delete program.ScriptSetup;
 
     if (source)
 	fs.writeFileSync(path.join(programpath,"scriptsource_" + san_program_name + extension), unescape(source));
