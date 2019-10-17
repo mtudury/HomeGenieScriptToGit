@@ -120,13 +120,13 @@ function writeProgramToDisk(program) {
     let programpath = path.join( config.dest_path, "programs", sanitize(program.Group), sanitize(program.Name));
 
     mkdirp.sync(programpath);
+    let san_program_name = sanitize(program.Name);
 
     fs.writeFileSync(path.join(programpath,"raw_" + san_program_name + ".json"), JSON.stringify(program));
 
     delete program.TriggerTime;
     delete program.ActivationTime;
 
-    let san_program_name = sanitize(program.Name);
     let source = program.ScriptSource;
     let condition = program.ScriptCondition;
 
