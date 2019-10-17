@@ -59,4 +59,5 @@ typings/
 
 # local project
 /Extract/config.json
+/Import/config.json
 .vscode/launch.json

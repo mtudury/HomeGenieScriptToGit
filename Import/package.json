@@ -1,0 +1,21 @@
+{
+  "name": "homegenie_script_git_import",
+  "version": "1.0.0",
+  "description": "Automate script import to Homegenie from file on filesystem",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "keywords": [
+    "homegenie"
+  ],
+  "author": "Matthieu Tudury",
+  "license": "MIT",
+  "dependencies": {
+    "request": "^2.81.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mtudury/HomeGenieScriptToGit.git"
+  }
+}
