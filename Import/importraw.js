@@ -44,7 +44,7 @@ if (args.length > 0) {
     console.log("todo one file");
 
 } else {
-    importProgramRaw('../data/test.json');
+    importProgramRaw('../data/raw_test.json');
 
 
 }
