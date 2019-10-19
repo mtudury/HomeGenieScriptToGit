@@ -5,6 +5,12 @@ const path = require('path');
 const fs = require('fs');
 const config = require('./config.json');
 
+
+if (!fs.existsSync(config.dest_path)) {
+    console.error("ERROR: destination path : "+config.dest_path+" does not exist");
+    process.exit(1);
+}
+
 const git = require('simple-git')(config.dest_path);
 
 let PromisePool = require('es6-promise-pool')
