@@ -5,11 +5,11 @@ const config = require('./config.json');
 const request = require('request');
 
 exports.process_all_folders_programs = async function process_all_folders_programs(action) {
-    let programsfolder = fs.readdirSync(path.join(config.src_path, "programs"));
+    let programsfolder = fs.readdirSync(path.join(config.dest_path, "programs"));
     for (const group of programsfolder) {
-        let groupcontent = fs.readdirSync(path.join(config.src_path, "programs", group));
+        let groupcontent = fs.readdirSync(path.join(config.dest_path, "programs", group));
         for (const program of groupcontent) {
-            let pathprogram = path.join(config.src_path, "programs", group, program);
+            let pathprogram = path.join(config.dest_path, "programs", group, program);
 
             await action(pathprogram, program);
         }
