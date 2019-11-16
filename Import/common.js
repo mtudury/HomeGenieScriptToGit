@@ -4,7 +4,7 @@ const fs = require('fs');
 const config = require('./config.json');
 const request = require('request');
 
-exports.process_all_folders_programs = async function process_all_folders_programs(action) {
+exports.process_all_folders_programs = async function (action) {
     let programsfolder = fs.readdirSync(path.join(config.dest_path, "programs"));
     for (const group of programsfolder) {
         let groupcontent = fs.readdirSync(path.join(config.dest_path, "programs", group));
@@ -16,6 +16,22 @@ exports.process_all_folders_programs = async function process_all_folders_progra
     }
 };
 
+exports.process_all_folders_widgets = async function (action) {
+    let widgetsfolder = fs.readdirSync(path.join(config.dest_path, "widgets"));
+    for (const brand of widgetsfolder) {
+        let brandcontent = fs.readdirSync(path.join(config.dest_path, "widgets", brand));
+        for (const category of brandcontent) {
+            let widgetscontent = fs.readdirSync(path.join(config.dest_path, "widgets", brand, category));
+            for (const widget of widgetscontent) {
+                if (path.extname(widget) == ".js") {
+
+                    let pathwidget = path.join(config.dest_path, "widgets", brand, category);
+                    await action(pathwidget, brand, category, path.basename(widget, '.js'));
+                }
+            }
+        }
+    }
+};
 
 exports.loadProgramsGroups = function () {
     return new Promise(function (resolve, reject) {
