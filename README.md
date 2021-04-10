@@ -89,6 +89,8 @@ then create a subfolder "git"  (./data/git)
 go to the git folder and create a git repo :
 ```bash
 git init .
+git config user.email "the_email_you_want@to_use.lan"
+git config user.name "Your Name"
 ```
 
 then run with the command
