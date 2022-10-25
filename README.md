@@ -7,9 +7,25 @@ Permit Import back to homegenie (restore older versions...)
 
 - Node/npm  
 - Git CLI  
+or
+- Docker
+
+## Quick Start (Docker)
+
+```bash
+mkdir data
+docker run --user $(id -u):$(id -g) --rm -v ${PWD}/data/:/hstg/ext/ --name=hstg mtudury/hstg:0.5
+vim data/config.json
+```
+update the homegenie url, save
+
+```bash
+docker run --user $(id -u):$(id -g) --rm -v ${PWD}/data/:/hstg/ext/ --name=hstg mtudury/hstg:0.5
+```
 
 
-## How to Install
+
+## How to Install (no Docker)
 
 Clone/Download this repository
 
