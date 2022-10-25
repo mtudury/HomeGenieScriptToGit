@@ -1,4 +1,4 @@
-FROM node:10-jessie
+FROM node:16-buster
 
 COPY Extract/ /hstg/
 COPY Import/ /hstgimport/

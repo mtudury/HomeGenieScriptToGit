@@ -1,3 +1,9 @@
+# v0.5
+
+- Upgrade to nodejs 16
+- Fix sample scripts
+- Remove old when renamed
+
 # v0.4
 
 - Widgets restore

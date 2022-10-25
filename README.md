@@ -69,8 +69,10 @@ Create a Cron : every days or hours ... depending on the frequency you want to s
 
 start with :
 
-create a data dir in current path, put your configuration : config.json file :
+create a data dir in current path, put your configuration : 
 
+config.json file :
+```json
 {
     "homegenie": { 
         "url": "http://url_of_homegenie/"
@@ -85,8 +87,12 @@ create a data dir in current path, put your configuration : config.json file :
         "push": false
     }
 }
+```
+
 then create a subfolder "git"  (./data/git)
+
 go to the git folder and create a git repo :
+
 ```bash
 git init .
 git config user.email "the_email_you_want@to_use.lan"
@@ -95,5 +101,7 @@ git config user.name "Your Name"
 
 then run with the command
 
-docker run --user $(id -u):$(id -g) --rm -v ${PWD}/data/:/hstg/ext/ --name=hstg mtudury/hstg:0.4
+```bash
+docker run --user $(id -u):$(id -g) --rm -v ${PWD}/data/:/hstg/ext/ --name=hstg mtudury/hstg:0.5
+```
 

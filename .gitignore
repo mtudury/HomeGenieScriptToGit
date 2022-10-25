@@ -61,3 +61,4 @@ typings/
 /Extract/config.json
 /Import/config.json
 .vscode/launch.json
+data/
